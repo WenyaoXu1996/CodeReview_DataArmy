@@ -1,0 +1,119 @@
+dag_name: de_daily_load_ac_shopping_crm
+source_credentials: postgres_ac_master
+source_schema: ac_shopping
+destination_schema: ac_shopping_crm
+destination_credentials: redshift_ac_master
+staging_schema: staging
+s3_bucket_name: ac-shopping-datalake
+
+tables:
+  - customer:
+      destination_table: customer
+      export_file_name: customer.csv
+      s3_file_path: ac_shopping_crm/customer.csv
+      column_inclusions: ["customer_id",
+                      "first_name",
+                      "last_name",
+                      "gender",
+                      "dob",
+                      "registered_at",
+                      "last_login_at",
+                      "email_address",
+                      "mobile",
+                      "street_1",
+                      "street_2",
+                      "suburb",
+                      "state",
+                      "country",
+                      "postcode",
+                      "created_at",
+                      "updated_at"]
+      update_method: full_load
+    #   incremental_load_columns: ["created_at","updated_at"]
+      copy_extra_params: "CSV DELIMITER AS ',' IGNOREHEADER 1 NULL AS 'NULL'"
+    
+  - product_upload:
+      destination_table: product_upload
+      export_file_name: product_upload.csv
+      s3_file_path: ac_shopping_crm/product_upload.csv
+      column_inclusions: [
+                     "product_upload_id",
+                      "product_id",
+                      "seller_id",
+                      "uploaded_datetime",
+                      "product_status",
+                      "approved_datetime",
+                      "rejected_datetime",
+                      "created_at",
+                      "updated_at"]
+      update_method: incremental_load
+      incremental_load_columns: ["created_at","updated_at"]
+      copy_extra_params: "CSV DELIMITER AS ',' IGNOREHEADER 1 NULL AS 'NULL'"
+  
+  - product:
+      destination_table: product
+      export_file_name: product.csv
+      s3_file_path: ac_shopping_crm/product.csv
+      column_inclusions: ["product_id",
+                          "product_title",
+                          "brand_name",
+                          "category_level_1",
+                          "category_level_2",
+                          "image_url",
+                          "is_active",
+                          "unit_price",
+                          "quantity_for_sale",
+                          "created_at",
+                          "updated_at"]
+      update_method: incremental_load
+      incremental_load_columns: ["created_at","updated_at"]
+      copy_extra_params: "CSV DELIMITER AS ',' IGNOREHEADER 1 NULL AS 'NULL'"
+  
+
+  - seller:
+      destination_table: seller
+      export_file_name: seller.csv
+      s3_file_path: ac_shopping_crm/seller.csv
+      column_inclusions: ["seller_id",
+                          "seller_name",
+                          "seller_location",
+                          "created_at",
+                          "updated_at"]
+      update_method: incremental_load
+      incremental_load_columns: ["created_at","updated_at"]
+      copy_extra_params: "CSV DELIMITER AS ',' IGNOREHEADER 1 NULL AS 'NULL'"
+
+  - order:
+      destination_table: order
+      export_file_name: order.csv
+      s3_file_path: ac_shopping_crm/order.csv
+      column_inclusions: ["order_id",
+                      "order_code",
+                      "order_datetime",
+                      "customer_id",
+                      "order_status",
+                      "device",
+                      "created_at",
+                      "updated_at"]
+      update_method: incremental_load
+      incremental_load_columns: ["created_at","updated_at"]
+      copy_extra_params: "CSV DELIMITER AS ',' IGNOREHEADER 1 NULL AS 'NULL'"
+
+  - order_line:
+      destination_table: order_line
+      export_file_name: order_line.csv
+      s3_file_path: ac_shopping_crm/order_line.csv
+      column_inclusions: ["order_line_id",
+                      "order_id",
+                      "line_item_no",
+                      "product_id",
+                      "quantity",
+                      "sale_price",
+                      "shipment_id",
+                      "cost",
+                      "revenue",                     
+                      "created_at",
+                      "updated_at"]
+      update_method: incremental_load
+      incremental_load_columns: ["created_at","updated_at"]
+      copy_extra_params: "CSV DELIMITER AS ',' IGNOREHEADER 1 NULL AS 'NULL'"
