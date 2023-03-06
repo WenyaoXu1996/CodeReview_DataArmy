@@ -80,8 +80,8 @@ def extract_data(table_name, table_columns, last_loaded_datetime):
 def upload_csv_to_s3(file_to_upload, s3_bucket_name, s3_folder_path):
     s3_client = boto3.client(
         "s3",
-        aws_access_key_id="AKIA2*****F5M",
-        aws_secret_access_key="xJMQ6Skg********MjwatwCCUV2RS",
+        aws_access_key_id="AKIA2P7EBZVPMC4PQF5M",
+        aws_secret_access_key="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",
     )
     s3_client.upload_file(file_to_upload, s3_bucket_name, s3_folder_path)
 
